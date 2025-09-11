@@ -1,0 +1,214 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ACM SIGAPP Futuristic Design System */
+
+@layer base {
+  :root {
+    /* Dark theme base colors */
+    --background: 222 84% 5%;
+    --foreground: 0 0% 98%;
+
+    /* Glass morphism colors */
+    --glass-bg: 0 0% 100% / 0.05;
+    --glass-border: 0 0% 100% / 0.1;
+    --glass-hover: 0 0% 100% / 0.08;
+
+    /* Gradient colors */
+    --gradient-cyan: 188 100% 69%;
+    --gradient-violet: 258 90% 66%;
+    --gradient-blue: 217 91% 60%;
+    
+    /* Accent colors */
+    --primary: 188 100% 69%;
+    --primary-foreground: 222 84% 5%;
+    
+    --secondary: 258 90% 66%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 215 28% 17%;
+    --muted-foreground: 217 10% 64%;
+
+    --accent: 217 33% 17%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 188 100% 69%;
+
+    --radius: 0.75rem;
+
+    /* Card colors */
+    --card: 222 84% 5%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 222 84% 5%;
+    --popover-foreground: 0 0% 98%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground overflow-x-hidden;
+  }
+
+  /* Global background gradient */
+  .gradient-bg {
+    background: linear-gradient(135deg, 
+      hsl(222, 84%, 5%) 0%, 
+      hsl(230, 84%, 8%) 25%, 
+      hsl(215, 28%, 17%) 50%, 
+      hsl(222, 84%, 5%) 100%
+    );
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* Animated aurora background */
+  .aurora-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(ellipse at 20% 50%, hsl(188, 100%, 69%, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, hsl(258, 90%, 66%, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 40% 80%, hsl(217, 91%, 60%, 0.05) 0%, transparent 50%);
+    animation: aurora 20s ease-in-out infinite;
+    z-index: -1;
+  }
+
+  @keyframes aurora {
+    0%, 100% { 
+      opacity: 0.3;
+      transform: scale(1) rotate(0deg); 
+    }
+    50% { 
+      opacity: 0.6;
+      transform: scale(1.1) rotate(2deg); 
+    }
+  }
+
+  /* Glassmorphism utilities */
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-hover {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Gradient text utilities */
+  .gradient-text {
+    background: linear-gradient(135deg, 
+      hsl(var(--gradient-cyan)), 
+      hsl(var(--gradient-violet))
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .gradient-text-alt {
+    background: linear-gradient(135deg, 
+      hsl(var(--gradient-violet)), 
+      hsl(var(--gradient-blue))
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Gradient border animation */
+  .gradient-border {
+    position: relative;
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, 
+      hsl(var(--gradient-cyan), 0.3), 
+      hsl(var(--gradient-violet), 0.3)
+    ) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+  }
+
+  /* Animated gradient backgrounds */
+  .gradient-bg-animated {
+    background: linear-gradient(135deg, 
+      hsl(var(--gradient-cyan)), 
+      hsl(var(--gradient-violet))
+    );
+    background-size: 200% 200%;
+    animation: gradientShift 5s ease-in-out infinite;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  /* Particle twinkling animation */
+  .twinkle {
+    animation: twinkle 3s ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  /* Magnetic hover effect */
+  .magnetic {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .magnetic:hover {
+    transform: translateY(-2px) scale(1.05);
+  }
+
+  /* 3D tilt effect */
+  .tilt-3d {
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease;
+  }
+
+  .tilt-3d:hover {
+    transform: perspective(1000px) rotateX(6deg) rotateY(-6deg) translateY(-6px);
+  }
+
+  /* Floating animation */
+  .float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* Glow effects */
+  .glow-cyan {
+    box-shadow: 0 0 20px hsl(var(--gradient-cyan), 0.3);
+  }
+
+  .glow-violet {
+    box-shadow: 0 0 20px hsl(var(--gradient-violet), 0.3);
+  }
+
+  .glow-hover:hover {
+    box-shadow: 0 0 30px hsl(var(--gradient-cyan), 0.4);
+  }
+}
