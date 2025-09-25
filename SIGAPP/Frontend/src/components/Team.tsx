@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Linkedin, Twitter, Github, Mail } from "lucide-react";
+import { Linkedin, Twitter, Github, Mail, Instagram } from "lucide-react"; // Add Instagram here
 
 // Glitter Background Component
 const GlitterBackground = () => (
@@ -84,6 +84,7 @@ const TeamCard = ({ member }) => (
     <p className="text-gray-300 text-sm">{member.bio}</p>
     <div className="flex justify-center space-x-3 mt-4">
       {member.social.linkedin && <SocialIcon href={member.social.linkedin} Icon={Linkedin} />}
+      {member.social.instagram && <SocialIcon href={member.social.instagram} Icon={Instagram} />} {/* Add this line */}
       {member.social.twitter && <SocialIcon href={member.social.twitter} Icon={Twitter} />}
       {member.social.github && <SocialIcon href={member.social.github} Icon={Github} />}
       {member.social.email && <SocialIcon href={`mailto:${member.social.email}`} Icon={Mail} />}
@@ -149,45 +150,46 @@ const TeamSection = ({ title, members }) => {
 // Main Team Component
 const Team = () => {
   const clubInCharge = [
-    { name: "Giridharan", role: "Chair", bio: "Leading the club’s vision and mission towards impactful computing solutions.", image: "", social: {} },
-    { name: "Divyan", role: "Vice Chair", bio: "Supporting leadership efforts and coordinating various initiatives.", image: "", social: {} },
-    { name: "Yukta", role: "Treasurer", bio: "Managing resources and ensuring smooth operational functions.", image: "", social: {} },
-    { name: "Shantanu", role: "Technical Director", bio: "Overseeing technical projects and innovation pipelines.", image: "", social: {} }
+    { name: "Giridharan", role: "Chair", bio: "Leading the club’s vision and mission towards impactful computing solutions.", image: "/images/Giridharan.JPG", social: {linkedin:"https://www.linkedin.com/in/girirraju", instagram:"https://www.instagram.com/_giriraju?igsh=MTI4emt0YnhjdjZtYg=="} },
+    { name: "Divyan", role: "Vice Chair", bio: "Supporting leadership efforts and coordinating various initiatives.", image: "", social: {linkedin:"https://www.linkedin.com/in/h-divyan", instagram:"https://www.instagram.com/divyan_.h?igsh=MWxrcWxyZ2dzYXh1bw=="} },
+    { name: "Yukta", role: "Treasurer", bio: "Managing resources and ensuring smooth operational functions.", image: "", social: {linkedin:"https://www.linkedin.com/in/yukta-bhardwaj-806467288", instagram:"https://www.instagram.com/yukta2106?igsh=YW9wcWd2bDRkemgx"} },
+    { name: "Shantanu", role: "Technical Director", bio: "Overseeing technical projects and innovation pipelines.", image: "", social: {linkedin:"https://www.linkedin.com/in/shantanu-v-", instagram:"https://www.instagram.com/shan.tanu07_?igsh=aTJpb3UzaTZsOWx5"} }
   ];
 
   const technicalTeam = {
     "Gen AI": [
-      { name: "Kavinraj", role: "Head", bio: "Exploring generative AI and large language models.", image: "", social: {} },
-      { name: "Pragya", role: "Lead", bio: "Supporting AI projects and research.", image: "", social: {} }
+      { name: "Kavinraj", role: "Head", bio: "Exploring generative AI and large language models.", image: "", social: {linkedin:"https://www.linkedin.com/in/kavinraj-mayilsamy", instagram:" "} },
+      { name: "Pragya", role: "Lead", bio: "Supporting AI projects and research.", image: "", social: {linkedin:"https://www.linkedin.com/in/pragya-paramita-sahoo-514bb2281", instagram:"https://www.instagram.com/_pragyaa02_?igsh=MnNic3g3N2F6cG43"} }
     ],
     "R&D": [
-      { name: "Samrithaa", role: "Head", bio: "Driving research and development across domains.", image: "", social: {} }
+      { name: "Samrithaa", role: "Head", bio: "Driving research and development across domains.", image: "", social: {linkedin:" ", instagram:"https://www.instagram.com/samrithaa_prabakar?igsh=MWtpcTF1Mzkzanl1bQ=="} }
     ],
     "Web/App Development": [
-      { name: "Bhuvanesh", role: "Head", bio: "Developing cutting-edge web and application solutions.", image: "", social: {} }
+      { name: "Bhuvanesh", role: "Head", bio: "Developing cutting-edge web and application solutions.", image: "/images/Bhuvanesh.jpg", social: {linkedin: "https://www.linkedin.com/in/bhuvanesh-s-5bb4922a9/", instagram:"https://www.instagram.com/bhuvan_7?igsh=MTl3ZzZzMXdwdjF1MA=="} },
+      { name: "Anushka Banerjee", role: "Lead", bio: "Leading the charge in smart on web/app development.", image: "", social: {linkedin: "https://www.linkedin.com/in/anu7hka/", instagram:"https://www.instagram.com/anusrkive?igsh=MWhlM25nMmZqY2Fjcw=="} }
     ],
     "Metaverse": [
-      { name: "Ankit", role: "Head", bio: "Innovating immersive experiences and virtual worlds.", image: "", social: {} },
-      { name: "Rishav", role: "Lead", bio: "Designing interactive environments and game elements.", image: "", social: {} }
+      { name: "Ankit", role: "Head", bio: "Innovating immersive experiences and virtual worlds.", image: "", social: {linkedin:"https://www.linkedin.com/in/ankit-mandal-724890359", instagram:" "} },
+      { name: "Rishav", role: "Lead", bio: "Designing interactive environments and game elements.", image: "", social: {linkedin:"https://www.linkedin.com/in/rishav-goswami-279789354", instagram:" "} }
     ]
   };
 
   const nonTechnicalTeam = {
      "Management": [
-      { name: "Mukilan", role: "Head", bio: "Driving leadership and team development.", image: "", social: {} },
-      { name: "Aditya", role: "Lead", bio: "Supporting management processes and planning.", image: "", social: {} },
-      { name: "Shedin", role: "Lead", bio: "Enhancing organizational efficiency and communication.", image: "", social: {} }
+      { name: "Mukilan", role: "Head", bio: "Driving leadership and team development.", image: "", social: {linkedin:" ", instagram:"https://www.instagram.com/mukilan_k_24?igsh=MXM0NWxiOG5jejl1OA=="} },
+      { name: "Aditya", role: "Lead", bio: "Supporting management processes and planning.", image: "", social: {linkedin:" ", instagram:"https://www.instagram.com/adihere1483?igsh=MWFnazBzZmNnMzE3ZA=="} },
+      { name: "Shedin", role: "Lead", bio: "Enhancing organizational efficiency and communication.", image: "", social: {linkedin:" ", instagram:"https://www.instagram.com/shedin.ashraf?igsh=c2lsZ2VyNGxvbXdi"} }
     ],
     "Creatives": [
-      { name: "Aqeel", role: "Head", bio: "Leading creative design and content initiatives.", image: "", social: {} },
-      { name: "Shreya", role: "Lead", bio: "Supporting multimedia projects and storytelling.", image: "", social: {} },
-      { name: "Praveen", role: "Lead", bio: "Enhancing visual communication and branding strategies.", image: "", social: {} }
+      { name: "Aqeel", role: "Head", bio: "Leading creative design and content initiatives.", image: "", social: {linkedin:"https://www.linkedin.com/in/aqeel-umar-287aa8245", instagram:"https://www.instagram.com/aqeel_3301?igsh=dTN6NWowdXBtdWNk"} },
+      { name: "Shreya", role: "Lead", bio: "Supporting multimedia projects and storytelling.", image: "", social: {linkedin:" ", instagram:"https://www.instagram.com/shreyy_a04?igsh=MXMwZGNhazZjMmtydQ=="} },
+      { name: "Praveen", role: "Lead", bio: "Enhancing visual communication and branding strategies.", image: "", social: {linkedin:"https://www.linkedin.com/in/praveen-saravanan", instagram:"https://www.instagram.com/thegraxwizard?igsh=MThrb3Ywc3duOXVmOQ=="} }
     ],
    
     "Corporate": [
-      { name: "", role: "Head", bio: "Managing organizational and strategic initiatives.", image: "", social: {} },
-      { name: "Vinay", role: "Lead", bio: "Streamlining operations and partnerships.", image: "", social: {} },
-      { name: "Saket", role: "Lead", bio: "Optimizing corporate governance and outreach.", image: "", social: {} }
+      { name: "Alka Sunil", role: "Head", bio: "Managing organizational and strategic initiatives.", image: "", social: {linkedin:"https://www.linkedin.com/in/alka-sunil-52326b278", instagram:"https://www.instagram.com/alkaftw?igsh=NzR6ajZ0cGQ3M3Rj"} },
+      { name: "Vinay", role: "Lead", bio: "Streamlining operations and partnerships.", image: "", social: {linkedin:"https://www.linkedin.com/in/vinay-bollineni-0abbb9287", instagram:"https://www.instagram.com/_vinaybollineni_?igsh=MXI1ODU2MWl2YWplZw=="} },
+      { name: "Saket", role: "Lead", bio: "Optimizing corporate governance and outreach.", image: "", social: {linkedin:" ", instagram:"https://www.instagram.com/saket_jha09?igsh=dHlsdmVoaGhnbTBv"} }
     ]
   };
 
