@@ -39,7 +39,7 @@ const Header = () => {
 
             {/* Second Logo */}
             <img
-              src="/logo.webp"
+              src="/logo.jpg"
               alt="Logo 2"
               className="h-8 w-8 object-contain"
             />
