@@ -193,7 +193,7 @@ const Footer = () => {
                 © 2025 ACM SIGAPP, SRMIST KTR. All rights reserved.
               </p>
               <p className="text-gray-500 text-xs mt-1">
-                Built by Neil along with the SIGAPP Web Team.
+                Built by ACM SIGAPP Web Team.
               </p>
             </div>
           </div>
