@@ -172,7 +172,7 @@ const TeamSection = ({ title, members }) => {
 const Team = () => {
   const clubInCharge = [
     { name: "Giridharan", role: "Chair", bio: "Leading the club’s vision and mission towards impactful computing solutions.", image: "/images/Giridharan.JPG", social: {linkedin:"https://www.linkedin.com/in/girirraju", instagram:"https://www.instagram.com/_giriraju?igsh=MTI4emt0YnhjdjZtYg=="} },
-    { name: "Divyan", role: "Vice Chair", bio: "Supporting leadership efforts and coordinating various initiatives.", image: "/images/divyan.JPG", social: {linkedin:"https://www.linkedin.com/in/h-divyan", instagram:"https://www.instagram.com/divyan_.h?igsh=MWxrcWxyZ2dzYXh1bw=="} },
+    { name: "Divyan", role: "Vice Chair", bio: "Supporting leadership efforts and coordinating various initiatives.", image: "/images/Divyan.JPG", social: {linkedin:"https://www.linkedin.com/in/h-divyan", instagram:"https://www.instagram.com/divyan_.h?igsh=MWxrcWxyZ2dzYXh1bw=="} },
     { name: "Yukta", role: "Treasurer", bio: "Managing resources and ensuring smooth operational functions.", image: "/images/Yukta.JPG", social: {linkedin:"https://www.linkedin.com/in/yukta-bhardwaj-806467288", instagram:"https://www.instagram.com/yukta2106?igsh=YW9wcWd2bDRkemgx"} },
     { name: "Shantanu", role: "Technical Director", bio: "Overseeing technical projects and innovation pipelines.", image: "/images/Shantanu.jpg", social: {linkedin:"https://www.linkedin.com/in/shantanu-v-", instagram:"https://www.instagram.com/shan.tanu07_?igsh=aTJpb3UzaTZsOWx5"} }
   ];
