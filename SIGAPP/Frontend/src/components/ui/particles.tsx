@@ -16,7 +16,7 @@ interface ParticleSystemProps {
 }
 
 export const ParticleSystem: React.FC<ParticleSystemProps> = ({ 
-  particleCount = 50, 
+  particleCount = 25, 
   className = "" 
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -57,48 +57,54 @@ export const ParticleSystem: React.FC<ParticleSystemProps> = ({
 
     initParticles();
 
-    // Animation loop
+    // Animation loop with reduced frequency
+    let frameCount = 0;
     const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      frameCount++;
+      
+      // Only update every other frame for better performance
+      if (frameCount % 2 === 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      particlesRef.current.forEach((particle, index) => {
-        // Update particle
-        particle.x += particle.vx;
-        particle.y += particle.vy;
-        particle.life -= particle.decay;
+        particlesRef.current.forEach((particle, index) => {
+          // Update particle
+          particle.x += particle.vx;
+          particle.y += particle.vy;
+          particle.life -= particle.decay;
 
-        // Reset particle if it dies or goes off screen
-        if (particle.life <= 0 || particle.x < 0 || particle.x > canvas.width || 
-            particle.y < 0 || particle.y > canvas.height) {
-          particlesRef.current[index] = {
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            vx: (Math.random() - 0.5) * 0.5,
-            vy: (Math.random() - 0.5) * 0.5,
-            life: 1,
-            decay: Math.random() * 0.02 + 0.005,
-            size: Math.random() * 2 + 1,
-          };
-        }
+          // Reset particle if it dies or goes off screen
+          if (particle.life <= 0 || particle.x < 0 || particle.x > canvas.width || 
+              particle.y < 0 || particle.y > canvas.height) {
+            particlesRef.current[index] = {
+              x: Math.random() * canvas.width,
+              y: Math.random() * canvas.height,
+              vx: (Math.random() - 0.5) * 0.5,
+              vy: (Math.random() - 0.5) * 0.5,
+              life: 1,
+              decay: Math.random() * 0.02 + 0.005,
+              size: Math.random() * 2 + 1,
+            };
+          }
 
-        // Draw particle with gradient colors
-        const opacity = particle.life;
-        const hue = (particle.x / canvas.width) * 60 + 180; // Cyan to violet range
-        
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        
-        // Create radial gradient for each particle
-        const gradient = ctx.createRadialGradient(
-          particle.x, particle.y, 0,
-          particle.x, particle.y, particle.size * 2
-        );
-        gradient.addColorStop(0, `hsla(${hue}, 100%, 69%, ${opacity})`);
-        gradient.addColorStop(1, `hsla(${hue}, 100%, 69%, 0)`);
-        
-        ctx.fillStyle = gradient;
-        ctx.fill();
-      });
+          // Draw particle with gradient colors
+          const opacity = particle.life;
+          const hue = (particle.x / canvas.width) * 60 + 180; // Cyan to violet range
+          
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          
+          // Create radial gradient for each particle
+          const gradient = ctx.createRadialGradient(
+            particle.x, particle.y, 0,
+            particle.x, particle.y, particle.size * 2
+          );
+          gradient.addColorStop(0, `hsla(${hue}, 100%, 69%, ${opacity})`);
+          gradient.addColorStop(1, `hsla(${hue}, 100%, 69%, 0)`);
+          
+          ctx.fillStyle = gradient;
+          ctx.fill();
+        });
+      }
 
       animationRef.current = requestAnimationFrame(animate);
     };

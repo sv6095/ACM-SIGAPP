@@ -61,11 +61,10 @@ const SocialIcon = ({ href, Icon }) => (
   </motion.a>
 );
 
-// Team Card Component
+// Team Card Component - Optimized
 const TeamCard = ({ member }) => (
-  <motion.div
-    className="glass p-6 rounded-2xl hover:glass-hover transition-all duration-300 group text-center tilt-3d border-white/10 relative overflow-hidden h-full flex flex-col"
-    whileHover={{ y: -5 }}
+  <div
+    className="glass p-6 rounded-2xl hover:glass-hover transition-all duration-200 group text-center border-white/10 relative overflow-hidden h-full flex flex-col"
   >
     <div className="relative mb-4">
       <div className="w-24 h-24 mx-auto rounded-full overflow-hidden border-4 border-gradient-cyan/30 group-hover:border-gradient-violet/50 transition-all duration-300 relative bg-gradient-to-br from-gradient-cyan/20 to-gradient-violet/20 flex items-center justify-center text-white text-2xl font-bold">
@@ -97,13 +96,11 @@ const TeamCard = ({ member }) => (
       {member.social.github && <SocialIcon href={member.social.github} Icon={Github} />}
       {member.social.email && <SocialIcon href={`mailto:${member.social.email}`} Icon={Mail} />}
     </div>
-  </motion.div>
+  </div>
 );
 
-// Team Section Component
+// Team Section Component - Optimized for performance
 const TeamSection = ({ title, members }) => {
-  const { containerVariants, itemVariants } = useStaggeredReveal(0.15);
-
   const gridCols = members.length === 1 ? "grid-cols-1" :
                    members.length === 2 ? "grid-cols-1 sm:grid-cols-2 justify-items-center" :
                    members.length === 3 ? "grid-cols-1 sm:grid-cols-3" :
@@ -112,27 +109,34 @@ const TeamSection = ({ title, members }) => {
 
   return (
     <div className="mb-16">
-      <AnimatedSection direction="fade" delay={0.1}>
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold gradient-text">{title}</h2>
-        </div>
-      </AnimatedSection>
+      <motion.div
+        className="text-center mb-8"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        viewport={{ once: true, margin: "-50px" }}
+      >
+        <h2 className="text-3xl font-bold gradient-text">{title}</h2>
+      </motion.div>
       
       <motion.div
         className={`grid ${gridCols} gap-8 max-w-5xl mx-auto`}
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6, staggerChildren: 0.1 }}
+        viewport={{ once: true, margin: "-50px" }}
       >
         {members.map((member, index) => (
           <motion.div 
-            key={member.name} 
-            variants={itemVariants}
+            key={member.name}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: index * 0.05 }}
+            viewport={{ once: true }}
             whileHover={{ 
-              y: -8, 
-              scale: 1.02,
-              transition: { duration: 0.3, ease: "easeOut" }
+              y: -4, 
+              scale: 1.01,
+              transition: { duration: 0.2, ease: "easeOut" }
             }}
           >
             <TeamCard member={member} />
@@ -195,10 +199,10 @@ const Team = () => {
       <div className="container mx-auto px-6 relative z-10">
         <motion.div
           className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          viewport={{ once: true, margin: "-50px" }}
         >
           <h1 className="text-4xl md:text-5xl font-bold mb-4 gradient-text">Introducing Our Team</h1>
           <p className="text-lg text-gray-300 max-w-2xl mx-auto">

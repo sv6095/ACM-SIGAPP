@@ -23,8 +23,8 @@ export const useScrollAnimation = (options: {
 
   const ref = useRef(null);
   const isInView = useInView(ref, { 
-    threshold, 
-    once: triggerOnce,
+    threshold: 0.1, 
+    once: true,
     margin: "-50px"
   });
   const controls = useAnimation();
@@ -88,15 +88,15 @@ export const useParallax = (offset: number = 50) => {
 };
 
 
-// Staggered reveal hook for multiple elements
-export const useStaggeredReveal = (staggerDelay: number = 0.1) => {
+// Staggered reveal hook for multiple elements - Optimized
+export const useStaggeredReveal = (staggerDelay: number = 0.05) => {
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
         staggerChildren: staggerDelay,
-        delayChildren: 0.1
+        delayChildren: 0.05
       }
     }
   };
@@ -104,17 +104,13 @@ export const useStaggeredReveal = (staggerDelay: number = 0.1) => {
   const itemVariants: Variants = {
     hidden: { 
       opacity: 0, 
-      y: 30,
-      scale: 0.95,
-      rotateX: -15
+      y: 20
     },
     visible: {
       opacity: 1,
       y: 0,
-      scale: 1,
-      rotateX: 0,
       transition: {
-        duration: 0.6,
+        duration: 0.4,
         ease: "easeOut"
       }
     }
