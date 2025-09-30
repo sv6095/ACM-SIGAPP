@@ -1,10 +1,28 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Linkedin, Twitter, Github, Mail, Instagram } from "lucide-react";
 import { AnimatedSection, AnimatedCard } from "@/components/ui/AnimatedSection";
 import { useScrollAnimation, useStaggeredReveal } from "@/hooks/useScrollAnimation";
+
+// Hook to detect mobile devices
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  return isMobile;
+};
 
 // Glitter Background Component
 const GlitterBackground = () => (
@@ -101,6 +119,8 @@ const TeamCard = ({ member }) => (
 
 // Team Section Component - Optimized for performance
 const TeamSection = ({ title, members }) => {
+  const isMobile = useIsMobile();
+  
   const gridCols = members.length === 1 ? "grid-cols-1" :
                    members.length === 2 ? "grid-cols-1 sm:grid-cols-2 justify-items-center" :
                    members.length === 3 ? "grid-cols-1 sm:grid-cols-3" :
@@ -133,11 +153,12 @@ const TeamSection = ({ title, members }) => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: index * 0.05 }}
             viewport={{ once: true }}
-            whileHover={{ 
+            className="mobile-no-hover"
+            whileHover={!isMobile ? { 
               y: -4, 
               scale: 1.01,
               transition: { duration: 0.2, ease: "easeOut" }
-            }}
+            } : {}}
           >
             <TeamCard member={member} />
           </motion.div>
