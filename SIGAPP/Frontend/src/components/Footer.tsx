@@ -41,7 +41,7 @@ const Footer = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
-      const res = await fetch("https://acm-sigapp-1.onrender.com/subscribe", {
+      const res = await fetch("https://acm-sigapp-production.up.railway.app/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

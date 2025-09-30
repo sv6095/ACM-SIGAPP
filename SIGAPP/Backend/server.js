@@ -153,7 +153,7 @@ app.post("/subscribe", async (req, res) => {
     });
 
     // Send verification email with retry logic
-    const verifyLink = `https://acm-sigapp-1.onrender.com/verify?token=${token}`;
+    const verifyLink = `https://acm-sigapp-production.up.railway.app/verify?token=${token}`;
 
     const sendEmailWithRetry = async () => {
       const emailData = {
