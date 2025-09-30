@@ -270,8 +270,9 @@ export default function Hero() {
         <motion.h1 initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="text-5xl md:text-7xl font-extrabold tracking-tight gradient-text drop-shadow-[0_0_20px_rgba(0,200,255,0.4)]">
           SRM ACM <span className="gradient-text">SIGAPP</span>
         </motion.h1>
-        <motion.h2 className="mt-6 text-2xl md:text-4xl font-semibold text-gray-200 leading-snug" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}>
+        <motion.h2 className="mt-6 text-lg xs:text-xl sm:text-2xl md:text-4xl font-semibold text-gray-200 leading-tight px-2 hero-subtitle" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}>
           <span className="gradient-text">Connecting Minds, </span>
+          <br className="sm:hidden" />
           <RotatingTypewriter prefix="Creating " words={["Innovation", "Solutions", "Change"]} className="inline gradient-text" typingSpeedMs={80} eraseSpeedMs={40} holdAfterTypeMs={1000} pauseBetweenWordsMs={300} />
         </motion.h2>
         <motion.div className="mt-10 flex flex-col sm:flex-row gap-6 justify-center" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.8 }}>

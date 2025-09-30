@@ -222,4 +222,31 @@
   .glow-hover:hover {
     box-shadow: 0 0 30px hsl(var(--gradient-cyan), 0.4);
   }
+
+  /* Disable hover effects on mobile devices */
+  .mobile-no-hover {
+    @media (max-width: 768px) {
+      transform: none !important;
+    }
+  }
+
+  /* Prevent unwanted transforms on mobile */
+  @media (max-width: 768px) {
+    .mobile-no-hover:hover {
+      transform: none !important;
+    }
+    
+    .mobile-no-hover:active {
+      transform: none !important;
+    }
+  }
+
+  /* Mobile text optimization */
+  @media (max-width: 480px) {
+    .hero-subtitle {
+      font-size: 0.9rem;
+      line-height: 1.3;
+      word-spacing: -0.05em;
+    }
+  }
 }
