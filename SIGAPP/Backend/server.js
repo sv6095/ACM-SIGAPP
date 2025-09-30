@@ -4,7 +4,6 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { google } from "googleapis";
-import fs from "fs";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import cron from "node-cron";
@@ -17,9 +16,14 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // -----------------------------
-// Google Sheets setup
+// Google Sheets setup (from env)
 // -----------------------------
-const CREDENTIALS = JSON.parse(fs.readFileSync("credentials.json"));
+if (!process.env.GOOGLE_CREDENTIALS) {
+  throw new Error("❌ Missing GOOGLE_CREDENTIALS env var in Render");
+}
+
+const CREDENTIALS = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 const auth = new google.auth.JWT(
   CREDENTIALS.client_email,
@@ -85,46 +89,30 @@ app.post("/subscribe", async (req, res) => {
     });
 
     // Send verification email
-    const verifyLink = `${process.env.BACKEND_URL || "http://localhost:5000"}/verify?token=${token}`;
+    const verifyLink = `${process.env.BACKEND_URL}/verify?token=${token}`;
 
     try {
-      const info = await transporter.sendMail({
+      await transporter.sendMail({
         from: `"SRM Club" <${process.env.EMAIL_USER}>`,
         to: email,
         subject: "Verify your SRM Club subscription",
-        text: `Hi, thanks for subscribing to SRM Club! 
-Please verify your email by clicking this link: ${verifyLink} 
-If you didn’t request this, just ignore this email.`,
         html: `<h2>Welcome to SRM Club 🎉</h2>
                <p>Thanks for subscribing with your SRM email. Please click below to verify:</p>
-             <a href="${verifyLink}" target="_blank"
-   style="display:inline-block; 
-          padding: 12px 28px;
-          color: #fff;
-          font-size: 16px;
-          font-weight: bold;
-          text-decoration: none;
-          border-radius: 12px;
-          background: rgba(30, 30, 30, 0.75);
-          backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.25);
-          box-shadow: 0 4px 20px rgba(0,0,0,0.6),
-                      inset 0 1px 1px rgba(255,255,255,0.2);">
-   Verify Email
-</a>
-
-               <p>This link expires in 24 hours. If you didn’t request this, you can safely ignore it.</p>
-               <br/>
-               <small>SRM Club | srmist.edu.in | Do not reply</small>`,
+               <a href="${verifyLink}" target="_blank"
+                  style="display:inline-block;padding:12px 28px;
+                         color:#fff;font-size:16px;font-weight:bold;
+                         text-decoration:none;border-radius:12px;
+                         background:rgba(30,30,30,0.75);">
+                  Verify Email
+               </a>
+               <p>This link expires in 24 hours.</p>`,
       });
 
-      console.log("Verification email sent:", info.response);
+      res.json({ success: true, message: "Verification email sent!" });
     } catch (mailErr) {
       console.error("Failed to send email:", mailErr);
       return res.status(500).json({ error: "Failed to send verification email" });
     }
-
-    res.json({ success: true, message: "Verification email sent!" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to subscribe" });
@@ -132,21 +120,13 @@ If you didn’t request this, just ignore this email.`,
 });
 
 // -----------------------------
-// Verify Route (now with HTML pages)
+// Verify Route (same as before)
 // -----------------------------
 app.get("/verify", async (req, res) => {
   try {
     const { token } = req.query;
     if (!token) {
-      return res.status(400).send(`
-        <html>
-          <head><title>Invalid Link</title></head>
-          <body style="font-family: Arial; text-align: center; margin-top: 50px;">
-            <h2>Invalid Verification Link</h2>
-            <p>The token is missing or incorrect.</p>
-          </body>
-        </html>
-      `);
+      return res.status(400).send("Invalid Verification Link");
     }
 
     const response = await sheets.spreadsheets.values.get({
@@ -157,18 +137,9 @@ app.get("/verify", async (req, res) => {
     const rowIndex = rows.findIndex((row) => row[3] === token);
 
     if (rowIndex === -1) {
-      return res.status(400).send(`
-        <html>
-          <head><title>Expired or Invalid</title></head>
-          <body style="font-family: Arial; text-align: center; margin-top: 50px;">
-            <h2>Link Expired or Invalid</h2>
-            <p>Your verification link is invalid or has already been used.</p>
-          </body>
-        </html>
-      `);
+      return res.status(400).send("Link Expired or Invalid");
     }
 
-    // Update status to Verified
     await sheets.spreadsheets.values.update({
       spreadsheetId: SHEET_ID,
       range: `Sheet1!C${rowIndex + 1}`,
@@ -176,26 +147,10 @@ app.get("/verify", async (req, res) => {
       requestBody: { values: [["Verified"]] },
     });
 
-    return res.send(`
-      <html>
-        <head><title>Verified</title></head>
-        <body style="font-family: Arial; text-align: center; margin-top: 50px;">
-          <h2>Email Verified Successfully!</h2>
-          <p>Thank you for verifying your email with SRM ACM SIGAPP</p>
-        </body>
-      </html>
-    `);
+    return res.send("Email Verified Successfully!");
   } catch (err) {
     console.error(err);
-    return res.status(500).send(`
-      <html>
-        <head><title>Error</title></head>
-        <body style="font-family: Arial; text-align: center; margin-top: 50px;">
-          <h2>Verification Failed</h2>
-          <p>Something went wrong while verifying your email. Please try again later.</p>
-        </body>
-      </html>
-    `);
+    return res.status(500).send("Verification Failed");
   }
 });
 
@@ -238,4 +193,4 @@ cron.schedule("0 * * * *", async () => {
 // Start server
 // -----------------------------
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Backend running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`✅ Backend running on port ${PORT}`));
