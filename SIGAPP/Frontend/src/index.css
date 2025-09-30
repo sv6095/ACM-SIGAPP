@@ -5,6 +5,17 @@
 /* ACM SIGAPP Futuristic Design System */
 
 @layer base {
+  /* Prevent unwanted scroll behavior */
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+  
+  body {
+    overflow-x: hidden;
+    position: relative;
+  }
+
   :root {
     /* Dark theme base colors */
     --background: 222 84% 5%;
@@ -83,7 +94,7 @@
       radial-gradient(ellipse at 20% 50%, hsl(188, 100%, 69%, 0.1) 0%, transparent 50%),
       radial-gradient(ellipse at 80% 20%, hsl(258, 90%, 66%, 0.1) 0%, transparent 50%),
       radial-gradient(ellipse at 40% 80%, hsl(217, 91%, 60%, 0.05) 0%, transparent 50%);
-    animation: aurora 20s ease-in-out infinite;
+    /* animation: aurora 20s ease-in-out infinite; */
     z-index: -1;
   }
 
@@ -189,9 +200,9 @@
     transform: perspective(1000px) rotateX(6deg) rotateY(-6deg) translateY(-6px);
   }
 
-  /* Floating animation */
+  /* Floating animation - disabled to prevent scroll issues */
   .float {
-    animation: float 6s ease-in-out infinite;
+    /* animation: float 6s ease-in-out infinite; */
   }
 
   @keyframes float {

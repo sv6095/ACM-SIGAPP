@@ -37,14 +37,28 @@ const SHEET_ID = "1xtUrGgPrWkL-6EgaPcLzKYJBLNeR8uz92OhKz6DsH_4";
 const RANGE = "Sheet1!A:E"; // Email | Timestamp | Status | Token | Expiry
 
 // -----------------------------
-// Nodemailer setup
+// Nodemailer setup with improved configuration
 // -----------------------------
 const transporter = nodemailer.createTransport({
   service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // true for 465, false for other ports
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  connectionTimeout: 60000, // 60 seconds
+  greetingTimeout: 30000, // 30 seconds
+  socketTimeout: 60000, // 60 seconds
+  pool: true, // use pooled connections
+  maxConnections: 5,
+  maxMessages: 100,
+  rateDelta: 20000, // 20 seconds
+  rateLimit: 5, // max 5 emails per 20 seconds
+  tls: {
+    rejectUnauthorized: false
+  }
 });
 
 // -----------------------------
@@ -99,30 +113,58 @@ app.post("/subscribe", async (req, res) => {
       },
     });
 
-    // Send verification email
+    // Send verification email with retry logic
     const verifyLink = `https://acm-sigapp-1.onrender.com/verify?token=${token}`;
 
-    try {
-      await transporter.sendMail({
-        from: `"SRM Club" <${process.env.EMAIL_USER}>`,
-        to: email,
-        subject: "Verify your SRM Club subscription",
-        html: `<h2>Welcome to SRM Club 🎉</h2>
-               <p>Thanks for subscribing with your SRM email. Please click below to verify:</p>
-               <a href="${verifyLink}" target="_blank"
-                  style="display:inline-block;padding:12px 28px;
-                         color:#fff;font-size:16px;font-weight:bold;
-                         text-decoration:none;border-radius:12px;
-                         background:rgba(30,30,30,0.75);">
-                  Verify Email
-               </a>
-               <p>This link expires in 24 hours.</p>`,
-      });
+    const sendEmailWithRetry = async (retries = 3) => {
+      for (let i = 0; i < retries; i++) {
+        try {
+          console.log(`Attempting to send email (attempt ${i + 1}/${retries})`);
+          
+          // Verify connection before sending
+          await transporter.verify();
+          console.log("SMTP connection verified successfully");
+          
+          const result = await transporter.sendMail({
+            from: `"SRM Club" <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: "Verify your SRM Club subscription",
+            html: `<h2>Welcome to SRM Club 🎉</h2>
+                   <p>Thanks for subscribing with your SRM email. Please click below to verify:</p>
+                   <a href="${verifyLink}" target="_blank"
+                      style="display:inline-block;padding:12px 28px;
+                             color:#fff;font-size:16px;font-weight:bold;
+                             text-decoration:none;border-radius:12px;
+                             background:rgba(30,30,30,0.75);">
+                      Verify Email
+                   </a>
+                   <p>This link expires in 24 hours.</p>`,
+          });
+          
+          console.log("Email sent successfully:", result.messageId);
+          return result;
+        } catch (mailErr) {
+          console.error(`Email attempt ${i + 1} failed:`, mailErr.message);
+          
+          if (i === retries - 1) {
+            throw mailErr;
+          }
+          
+          // Wait before retry (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+        }
+      }
+    };
 
+    try {
+      await sendEmailWithRetry();
       res.json({ success: true, message: "Verification email sent!" });
     } catch (mailErr) {
-      console.error("Failed to send email:", mailErr);
-      return res.status(500).json({ error: "Failed to send verification email" });
+      console.error("Failed to send email after all retries:", mailErr);
+      return res.status(500).json({ 
+        error: "Failed to send verification email. Please try again later.",
+        details: mailErr.message 
+      });
     }
   } catch (err) {
     console.error(err);
