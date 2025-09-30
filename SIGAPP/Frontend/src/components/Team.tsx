@@ -2,7 +2,9 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Linkedin, Twitter, Github, Mail, Instagram } from "lucide-react"; // Add Instagram here
+import { Linkedin, Twitter, Github, Mail, Instagram } from "lucide-react";
+import { AnimatedSection, AnimatedCard } from "@/components/ui/AnimatedSection";
+import { useScrollAnimation, useStaggeredReveal } from "@/hooks/useScrollAnimation";
 
 // Glitter Background Component
 const GlitterBackground = () => (
@@ -62,7 +64,7 @@ const SocialIcon = ({ href, Icon }) => (
 // Team Card Component
 const TeamCard = ({ member }) => (
   <motion.div
-    className="glass p-6 rounded-2xl hover:glass-hover transition-all duration-300 group text-center tilt-3d border-white/10 relative overflow-hidden"
+    className="glass p-6 rounded-2xl hover:glass-hover transition-all duration-300 group text-center tilt-3d border-white/10 relative overflow-hidden h-full flex flex-col"
     whileHover={{ y: -5 }}
   >
     <div className="relative mb-4">
@@ -80,8 +82,14 @@ const TeamCard = ({ member }) => (
     <h3 className="text-lg font-bold mb-1 text-white group-hover:gradient-text transition-all">
       {member.name}
     </h3>
-    <p className="gradient-text-alt text-sm mb-3">{member.role}</p>
-    <p className="text-gray-300 text-sm">{member.bio}</p>
+    <p className={`text-sm mb-3 font-semibold ${
+      member.role === 'Head' 
+        ? 'text-gradient-cyan font-bold text-base' 
+        : member.role === 'Lead' 
+        ? 'text-gradient-violet font-bold text-base' 
+        : 'gradient-text-alt'
+    }`}>{member.role}</p>
+    <p className="text-gray-300 text-sm flex-grow">{member.bio}</p>
     <div className="flex justify-center space-x-3 mt-4">
       {member.social.linkedin && <SocialIcon href={member.social.linkedin} Icon={Linkedin} />}
       {member.social.instagram && <SocialIcon href={member.social.instagram} Icon={Instagram} />} {/* Add this line */}
@@ -94,51 +102,39 @@ const TeamCard = ({ member }) => (
 
 // Team Section Component
 const TeamSection = ({ title, members }) => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6 }
-    }
-  };
+  const { containerVariants, itemVariants } = useStaggeredReveal(0.15);
 
   const gridCols = members.length === 1 ? "grid-cols-1" :
                    members.length === 2 ? "grid-cols-1 sm:grid-cols-2 justify-items-center" :
                    members.length === 3 ? "grid-cols-1 sm:grid-cols-3" :
+                   members.length === 4 ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" :
                    "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4";
 
   return (
-    <div className="mb-12">
-      <motion.div
-        className="text-center mb-6"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
-      >
-        <h2 className="text-3xl font-bold gradient-text">{title}</h2>
-      </motion.div>
+    <div className="mb-16">
+      <AnimatedSection direction="fade" delay={0.1}>
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold gradient-text">{title}</h2>
+        </div>
+      </AnimatedSection>
+      
       <motion.div
         className={`grid ${gridCols} gap-8 max-w-5xl mx-auto`}
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true }}
+        viewport={{ once: true, margin: "-100px" }}
       >
-        {members.map((member) => (
-          <motion.div key={member.name} variants={cardVariants}>
+        {members.map((member, index) => (
+          <motion.div 
+            key={member.name} 
+            variants={itemVariants}
+            whileHover={{ 
+              y: -8, 
+              scale: 1.02,
+              transition: { duration: 0.3, ease: "easeOut" }
+            }}
+          >
             <TeamCard member={member} />
           </motion.div>
         ))}
@@ -151,7 +147,7 @@ const TeamSection = ({ title, members }) => {
 const Team = () => {
   const clubInCharge = [
     { name: "Giridharan", role: "Chair", bio: "Leading the club’s vision and mission towards impactful computing solutions.", image: "/images/Giridharan.JPG", social: {linkedin:"https://www.linkedin.com/in/girirraju", instagram:"https://www.instagram.com/_giriraju?igsh=MTI4emt0YnhjdjZtYg=="} },
-    { name: "Divyan", role: "Vice Chair", bio: "Supporting leadership efforts and coordinating various initiatives.", image: "/images/Divyan.JPG", social: {linkedin:"https://www.linkedin.com/in/h-divyan", instagram:"https://www.instagram.com/divyan_.h?igsh=MWxrcWxyZ2dzYXh1bw=="} },
+    { name: "Divyan", role: "Vice Chair", bio: "Supporting leadership efforts and coordinating various initiatives.", image: "/images/divyan.jpg", social: {linkedin:"https://www.linkedin.com/in/h-divyan", instagram:"https://www.instagram.com/divyan_.h?igsh=MWxrcWxyZ2dzYXh1bw=="} },
     { name: "Yukta", role: "Treasurer", bio: "Managing resources and ensuring smooth operational functions.", image: "/images/Yukta.JPG", social: {linkedin:"https://www.linkedin.com/in/yukta-bhardwaj-806467288", instagram:"https://www.instagram.com/yukta2106?igsh=YW9wcWd2bDRkemgx"} },
     { name: "Shantanu", role: "Technical Director", bio: "Overseeing technical projects and innovation pipelines.", image: "/images/Shantanu.jpg", social: {linkedin:"https://www.linkedin.com/in/shantanu-v-", instagram:"https://www.instagram.com/shan.tanu07_?igsh=aTJpb3UzaTZsOWx5"} }
   ];
@@ -177,7 +173,7 @@ const Team = () => {
   const nonTechnicalTeam = {
      "Management": [
       { name: "Mukilan", role: "Head", bio: "Driving leadership and team development.", image: "/images/Mukilan.jpg", social: {linkedin:"https://www.linkedin.com/in/mukilan-krishna-92574a2ab?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app", instagram:"https://www.instagram.com/mukilan_k_24?igsh=MXM0NWxiOG5jejl1OA=="} },
-      { name: "Aditya", role: "Lead", bio: "Supporting management processes and planning.", image: "/images/Aditya.JPG", social: {linkedin:"https://www.linkedin.com/in/adityagautam2005?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app", instagram:"https://www.instagram.com/adihere1483?igsh=MWFnazBzZmNnMzE3ZA=="} },
+      { name: "Aditya", role: "Lead", bio: "Supporting management processes and planning.", image: "/images/Aditya.png", social: {linkedin:"https://www.linkedin.com/in/adityagautam2005?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app", instagram:"https://www.instagram.com/adihere1483?igsh=MWFnazBzZmNnMzE3ZA=="} },
       { name: "Shedin", role: "Lead", bio: "Enhancing organizational efficiency and communication.", image: "/images/Shedin.JPG", social: {linkedin:"https://www.linkedin.com/company/srm-acm-sigapp/", instagram:"https://www.instagram.com/shedin.ashraf?igsh=c2lsZ2VyNGxvbXdi"} }
     ],
     "Creatives": [
