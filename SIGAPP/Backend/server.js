@@ -53,6 +53,17 @@ const transporter = nodemailer.createTransport({
 const SRM_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@srmist\.edu\.in$/;
 
 // -----------------------------
+// Root Route
+// -----------------------------
+app.get("/", (req, res) => {
+  res.json({ 
+    message: "ACM SIGAPP Backend is running!", 
+    status: "success",
+    endpoints: ["/subscribe", "/verify"]
+  });
+});
+
+// -----------------------------
 // Subscribe Route
 // -----------------------------
 app.post("/subscribe", async (req, res) => {
@@ -89,7 +100,7 @@ app.post("/subscribe", async (req, res) => {
     });
 
     // Send verification email
-    const verifyLink = `${process.env.BACKEND_URL}/verify?token=${token}`;
+    const verifyLink = `https://acm-sigapp-1.onrender.com/verify?token=${token}`;
 
     try {
       await transporter.sendMail({
