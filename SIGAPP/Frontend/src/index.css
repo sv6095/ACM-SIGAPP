@@ -249,30 +249,4 @@
       word-spacing: -0.05em;
     }
   }
-
-  /* Email subscription animations */
-  .subscription-success {
-    animation: successPulse 0.6s ease-out;
-  }
-
-  .subscription-error {
-    animation: errorShake 0.5s ease-out;
-  }
-
-  @keyframes successPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-  }
-
-  @keyframes errorShake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-  }
-
-  /* Progress bar glow effect */
-  .progress-glow {
-    box-shadow: 0 0 10px hsl(var(--gradient-cyan), 0.5);
-  }
 }

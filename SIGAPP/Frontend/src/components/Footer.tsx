@@ -15,8 +15,6 @@ const Footer = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState(""); // "validating", "sending", "success", "error"
 
   const socialLinks = [
     { icon: Linkedin, href: "https://www.linkedin.com/company/srm-acm-sigapp/", label: "LinkedIn" },
@@ -35,29 +33,8 @@ const Footer = () => {
       setMessage("⚠️ Please enter an email");
       return;
     }
-
-    // Reset states
     setLoading(true);
     setMessage("");
-    setProgress(0);
-    setStatus("validating");
-
-    // Immediate UI feedback
-    setTimeout(() => {
-      setProgress(20);
-      setStatus("sending");
-      setMessage("🔄 Validating email...");
-    }, 100);
-
-    setTimeout(() => {
-      setProgress(40);
-      setMessage("📤 Sending subscription request...");
-    }, 500);
-
-    setTimeout(() => {
-      setProgress(60);
-      setMessage("📧 Processing email verification...");
-    }, 1000);
 
     try {
       // Add timeout to the fetch request
@@ -72,46 +49,29 @@ const Footer = () => {
       });
 
       clearTimeout(timeoutId);
-      setProgress(80);
 
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
 
       const data = await res.json();
-      setProgress(100);
-      
       if (data.success) {
-        setStatus("success");
         setMessage("✅ Subscribed successfully!");
         setEmail("");
-        
-        // Success animation
-        setTimeout(() => {
-          setMessage("🎉 Welcome to SRM ACM SIGAPP!");
-        }, 1000);
       } else {
-        setStatus("error");
         setMessage("❌ " + (data.error || "Failed to subscribe"));
       }
     } catch (err) {
       console.error("Subscription error:", err);
-      setStatus("error");
-      setProgress(0);
-      
       if (err.name === 'AbortError') {
-        setMessage("⏰ Request timeout. Please try again.");
+        setMessage("❌ Request timeout. Please try again.");
       } else if (err.message.includes('Failed to fetch')) {
-        setMessage("🌐 Network error. Please check your connection.");
+        setMessage("❌ Network error. Please check your connection.");
       } else {
-        setMessage("⚠️ Server error. Please try again later.");
+        setMessage("❌ Server error. Please try again later.");
       }
     } finally {
       setLoading(false);
-      setTimeout(() => {
-        setProgress(0);
-        setStatus("");
-      }, 3000);
     }
   };
 
@@ -207,52 +167,13 @@ const Footer = () => {
                   size="default"
                   onClick={handleSubscribe}
                   disabled={loading}
-                  className={`gradient-bg-animated group relative overflow-hidden ${
-                    status === 'success' ? 'bg-green-500' : 
-                    status === 'error' ? 'bg-red-500' : ''
-                  }`}
+                  className="gradient-bg-animated group"
                 >
-                  {loading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span className="text-sm">Sending...</span>
-                    </div>
-                  ) : (
-                    <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  )}
+                  <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </div>
-              
-              {/* Progress Bar */}
-              {loading && progress > 0 && (
-                <div className="mt-4">
-                  <div className="flex justify-between text-xs text-gray-400 mb-1">
-                    <span>Progress</span>
-                    <span>{progress}%</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-gradient-cyan to-gradient-violet transition-all duration-300 ease-out"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                </div>
-              )}
-              
-              {/* Status Message */}
               {message && (
-                <div className={`mt-3 p-3 rounded-lg text-sm ${
-                  status === 'success' ? 'bg-green-500/20 text-green-300 border border-green-500/30 subscription-success' :
-                  status === 'error' ? 'bg-red-500/20 text-red-300 border border-red-500/30 subscription-error' :
-                  'bg-blue-500/20 text-blue-300 border border-blue-500/30'
-                }`}>
-                  <div className="flex items-center gap-2">
-                    {status === 'success' && <span className="text-green-400">✓</span>}
-                    {status === 'error' && <span className="text-red-400">✗</span>}
-                    {status === 'sending' && <span className="text-blue-400 animate-pulse">⟳</span>}
-                    <span>{message}</span>
-                  </div>
-                </div>
+                <p className="text-xs text-gray-400 mt-3">{message}</p>
               )}
             </div>
           </motion.div>
