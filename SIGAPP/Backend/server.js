@@ -23,7 +23,14 @@ console.log("   PORT:", process.env.PORT || "5000 (default)");
 const app = express();
 // Enhanced CORS configuration
 app.use(cors({
-  origin: ['https://acm-sigapp-production.up.railway.app'],
+  origin: [
+    'https://acm-sigapp-production.up.railway.app', // Backend URL
+    'https://acm-sigapp-yho1-f836xfqdi-shantanus-projects-bddb91ff.vercel.app', // Vercel deployment URL
+    'https://srmacmsigapp.xyz', // Custom domain
+    'https://www.srmacmsigapp.xyz', // Custom domain with www
+    'http://localhost:8080', // Local development
+    'http://localhost:3000'  // Alternative local development
+  ],
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -37,6 +44,18 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
+// Log all incoming requests
+app.use((req, res, next) => {
+  console.log("📥 Incoming request:", {
+    method: req.method,
+    path: req.path,
+    origin: req.headers.origin,
+    userAgent: req.headers['user-agent']?.substring(0, 50) + '...',
+    timestamp: new Date().toISOString()
+  });
+  next();
+});
+
 // Handle preflight OPTIONS requests
 app.options('*', (req, res) => {
   console.log("🔄 OPTIONS request received:", {
@@ -46,6 +65,7 @@ app.options('*', (req, res) => {
     userAgent: req.headers['user-agent'],
     timestamp: new Date().toISOString()
   });
+  console.log("🌐 CORS: Allowing request from origin:", req.headers.origin);
   res.status(200).end();
 });
 
