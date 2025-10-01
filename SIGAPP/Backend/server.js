@@ -129,7 +129,7 @@ const createTransporter = (config = {}) => {
     ...config
   };
   
-  return nodemailer.createTransporter(defaultConfig);
+  return nodemailer.createTransport(defaultConfig);
 };
 
 // Alternative configurations
