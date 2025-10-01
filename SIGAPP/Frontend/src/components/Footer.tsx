@@ -50,11 +50,25 @@ const Footer = () => {
 
       clearTimeout(timeoutId);
 
+      const data = await res.json();
+      
       if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+        // Handle error responses (400, 500, etc.)
+        let errorMessage = data.error || "Failed to subscribe";
+        
+        // Show user-friendly messages for specific error codes
+        if (data.code === "DUPLICATE_EMAIL") {
+          errorMessage = "You are already subscribed!";
+        } else if (data.code === "INVALID_EMAIL_DOMAIN") {
+          errorMessage = "Only @srmist.edu.in emails are allowed";
+        } else if (data.code === "MISSING_EMAIL") {
+          errorMessage = "Please enter an email address";
+        }
+        
+        setMessage("❌ " + errorMessage);
+        return;
       }
 
-      const data = await res.json();
       if (data.success) {
         setMessage("✅ Subscribed successfully!");
         setEmail("");
