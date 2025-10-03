@@ -15,7 +15,7 @@ dotenv.config();
 // Environment Variables Check
 // -----------------------------
 console.log("🔧 Environment Variables Check:");
-console.log("   GOOGLE_CREDENTIALS:", process.env.GOOGLE_CREDENTIALS ? "✅ Set" : "❌ Missing");
+console.log("   credentials:", process.env.credentials ? "✅ Set" : "❌ Missing");
 console.log("   EMAIL_USER:", process.env.EMAIL_USER ? "✅ Set" : "❌ Missing");
 console.log("   EMAIL_PASS:", process.env.EMAIL_PASS ? "✅ Set" : "❌ Missing");
 console.log("   PORT:", process.env.PORT || "5000 (default)");
@@ -122,11 +122,11 @@ app.options('*', (req, res) => {
 // -----------------------------
 // Google Sheets setup (from env)
 // -----------------------------
-if (!process.env.GOOGLE_CREDENTIALS) {
-  throw new Error("❌ Missing GOOGLE_CREDENTIALS env var in Railway");
+if (!process.env.credentials) {
+  throw new Error("❌ Missing credentials env var in Render");
 }
 
-const CREDENTIALS = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+const CREDENTIALS = JSON.parse(process.env.credentials);
 console.log("📊 Google Sheets Configuration:");
 console.log("   Client Email:", CREDENTIALS.client_email);
 console.log("   Project ID:", CREDENTIALS.project_id);
