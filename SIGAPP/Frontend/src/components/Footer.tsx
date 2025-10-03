@@ -28,7 +28,7 @@ const Footer = () => {
     { label: "Domain", href: "#domains" }
   ];
 
-  const handleSubscribe = async () => {
+  const handleSubscribe = async (retryCount = 0) => {
     if (!email) {
       setMessage("⚠️ Please enter an email");
       return;
@@ -37,15 +37,21 @@ const Footer = () => {
     setMessage("");
 
     try {
-      // Add timeout to the fetch request
+      // Add timeout to the fetch request - longer for mobile networks
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 45000); // 45 second timeout for mobile
 
       const res = await fetch("https://acm-sigapp-production.up.railway.app/subscribe", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Cache-Control": "no-cache"
+        },
         body: JSON.stringify({ email }),
-        signal: controller.signal
+        signal: controller.signal,
+        mode: 'cors', // Explicitly set CORS mode
+        credentials: 'omit' // Don't send credentials for better mobile compatibility
       });
 
       clearTimeout(timeoutId);
@@ -77,10 +83,27 @@ const Footer = () => {
       }
     } catch (err) {
       console.error("Subscription error:", err);
+      
+      // Retry logic for mobile networks (max 2 retries)
+      if (retryCount < 2 && (
+        err.name === 'AbortError' || 
+        err.message.includes('Failed to fetch') ||
+        err.message.includes('NetworkError') ||
+        err.message.includes('TypeError')
+      )) {
+        console.log(`Retrying request (attempt ${retryCount + 1}/2)...`);
+        setTimeout(() => {
+          handleSubscribe(retryCount + 1);
+        }, 2000 * (retryCount + 1)); // Exponential backoff: 2s, 4s
+        return;
+      }
+      
       if (err.name === 'AbortError') {
-        setMessage("❌ Request timeout. Please try again.");
-      } else if (err.message.includes('Failed to fetch')) {
-        setMessage("❌ Network error. Please check your connection.");
+        setMessage("❌ Request timeout. Please check your connection and try again.");
+      } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+        setMessage("❌ Network error. Please check your internet connection and try again.");
+      } else if (err.message.includes('CORS')) {
+        setMessage("❌ Connection blocked. Please try again or contact support.");
       } else {
         setMessage("❌ Server error. Please try again later.");
       }

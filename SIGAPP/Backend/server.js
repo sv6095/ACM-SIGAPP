@@ -21,19 +21,49 @@ console.log("   EMAIL_PASS:", process.env.EMAIL_PASS ? "✅ Set" : "❌ Missing"
 console.log("   PORT:", process.env.PORT || "5000 (default)");
 
 const app = express();
-// Enhanced CORS configuration
+// Enhanced CORS configuration for mobile compatibility
 app.use(cors({
-  origin: [
-    'https://acm-sigapp-production.up.railway.app', // Backend URL
-    'https://acm-sigapp-yho1-f836xfqdi-shantanus-projects-bddb91ff.vercel.app', // Vercel deployment URL
-    'https://srmacmsigapp.xyz', // Custom domain
-    'https://www.srmacmsigapp.xyz', // Custom domain with www
-    'http://localhost:8080', // Local development
-    'http://localhost:3000'  // Alternative local development
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'https://acm-sigapp-production.up.railway.app', // Backend URL
+      'https://acm-sigapp-yho1-f836xfqdi-shantanus-projects-bddb91ff.vercel.app', // Vercel deployment URL
+      'https://srmacmsigapp.xyz', // Custom domain
+      'https://www.srmacmsigapp.xyz' // Custom domain with www
+    ];
+    
+    // Allow any Vercel deployment (for dynamic URLs)
+    if (origin.includes('.vercel.app')) {
+      return callback(null, true);
+    }
+    
+    // Allow any Railway deployment (for dynamic URLs)
+    if (origin.includes('.up.railway.app')) {
+      return callback(null, true);
+    }
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    console.log('🚫 CORS blocked origin:', origin);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: [
+    'Content-Type', 
+    'Authorization', 
+    'X-Requested-With',
+    'Accept',
+    'Origin',
+    'Access-Control-Request-Method',
+    'Access-Control-Request-Headers'
   ],
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  credentials: true,
+  optionsSuccessStatus: 200, // For legacy browser support
+  preflightContinue: false
 }));
 
 // Express built-in JSON parser (preferred over bodyParser)
@@ -51,8 +81,28 @@ app.use((req, res, next) => {
     path: req.path,
     origin: req.headers.origin,
     userAgent: req.headers['user-agent']?.substring(0, 50) + '...',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    ip: req.ip,
+    forwarded: req.headers['x-forwarded-for']
   });
+  next();
+});
+
+// Mobile network compatibility middleware
+app.use((req, res, next) => {
+  // Add headers for better mobile compatibility
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Access-Control-Request-Method, Access-Control-Request-Headers');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  
+  // Handle mobile network timeouts
+  req.setTimeout(60000); // 60 seconds
+  res.setTimeout(60000); // 60 seconds
+  
   next();
 });
 
@@ -119,7 +169,25 @@ app.get("/", (req, res) => {
   res.json({ 
     message: "ACM SIGAPP Backend is running!", 
     status: "success",
-    endpoints: ["/subscribe"]
+    endpoints: ["/subscribe", "/health"],
+    timestamp: new Date().toISOString()
+  });
+});
+
+// -----------------------------
+// Health Check Route (Mobile-friendly)
+// -----------------------------
+app.get("/health", (req, res) => {
+  console.log("💚 Health check accessed:", {
+    ip: req.ip,
+    userAgent: req.headers['user-agent'],
+    timestamp: new Date().toISOString()
+  });
+  res.json({ 
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'production'
   });
 });
 
