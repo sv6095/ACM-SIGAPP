@@ -28,7 +28,7 @@ app.use(cors({
     if (!origin) return callback(null, true);
     
     const allowedOrigins = [
-      'https://acm-sigapp-production.up.railway.app', // Backend URL
+      'https://acm-sigapp.onrender.com', // Backend URL
       'https://acm-sigapp-yho1-f836xfqdi-shantanus-projects-bddb91ff.vercel.app', // Vercel deployment URL
       'https://srmacmsigapp.xyz', // Custom domain
       'https://www.srmacmsigapp.xyz' // Custom domain with www
@@ -39,8 +39,8 @@ app.use(cors({
       return callback(null, true);
     }
     
-    // Allow any Railway deployment (for dynamic URLs)
-    if (origin.includes('.up.railway.app')) {
+    // Allow any Render deployment (for dynamic URLs)
+    if (origin.includes('.onrender.com')) {
       return callback(null, true);
     }
     
@@ -366,8 +366,8 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log("🚀 Server startup complete!");
   console.log(`✅ Backend running on port ${PORT}`);
-  console.log(`🌐 Server URL: https://acm-sigapp-production.up.railway.app`);
-  console.log(`📊 Health check: https://acm-sigapp-production.up.railway.app/`);
-  console.log("📧 Subscribe endpoint: https://acm-sigapp-production.up.railway.app/subscribe");
-  console.log("🚀 Deployed on Railway!");
+  console.log(`🌐 Server URL: https://acm-sigapp.onrender.com`);
+  console.log(`📊 Health check: https://acm-sigapp.onrender.com/`);
+  console.log("📧 Subscribe endpoint: https://acm-sigapp.onrender.com/subscribe");
+  console.log("🚀 Deployed on Render!");
 });
