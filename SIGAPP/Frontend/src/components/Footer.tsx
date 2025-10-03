@@ -41,7 +41,7 @@ const Footer = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 45000); // 45 second timeout for mobile
 
-      const res = await fetch("https://acm-sigapp-production.up.railway.app/subscribe", {
+      const res = await fetch("https://acm-sigapp.onrender.com/subscribe", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
