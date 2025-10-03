@@ -56,24 +56,38 @@ const Footer = () => {
 
       clearTimeout(timeoutId);
 
-      const data = await res.json();
-      
+      // Check if response is ok before trying to parse JSON
       if (!res.ok) {
-        // Handle error responses (400, 500, etc.)
-        let errorMessage = data.error || "Failed to subscribe";
+        let errorMessage = "Failed to subscribe";
+        let errorCode = "";
+        
+        try {
+          const errorData = await res.json();
+          errorMessage = errorData.error || errorMessage;
+          errorCode = errorData.code || "";
+        } catch (parseError) {
+          console.error("Failed to parse error response:", parseError);
+          // Use default error message
+        }
         
         // Show user-friendly messages for specific error codes
-        if (data.code === "DUPLICATE_EMAIL") {
+        if (errorCode === "DUPLICATE_EMAIL") {
           errorMessage = "You are already subscribed!";
-        } else if (data.code === "INVALID_EMAIL_DOMAIN") {
+        } else if (errorCode === "INVALID_EMAIL_DOMAIN") {
           errorMessage = "Only @srmist.edu.in emails are allowed";
-        } else if (data.code === "MISSING_EMAIL") {
+        } else if (errorCode === "MISSING_EMAIL") {
           errorMessage = "Please enter an email address";
+        } else if (res.status === 400) {
+          errorMessage = "Invalid request. Please check your email and try again.";
+        } else if (res.status === 500) {
+          errorMessage = "Server error. Please try again later.";
         }
         
         setMessage("❌ " + errorMessage);
         return;
       }
+
+      const data = await res.json();
 
       if (data.success) {
         setMessage("✅ Subscribed successfully!");
@@ -82,7 +96,14 @@ const Footer = () => {
         setMessage("❌ " + (data.error || "Failed to subscribe"));
       }
     } catch (err) {
-      console.error("Subscription error:", err);
+      console.error("Subscription error:", {
+        error: err,
+        name: err.name,
+        message: err.message,
+        stack: err.stack,
+        retryCount,
+        email: email.substring(0, 5) + "..." // Log partial email for debugging
+      });
       
       // Retry logic for mobile networks (max 2 retries)
       if (retryCount < 2 && (
