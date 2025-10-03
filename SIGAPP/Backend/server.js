@@ -2,7 +2,6 @@
 
 import express from "express";
 import cors from "cors";
-import bodyParser from "body-parser";
 import { google } from "googleapis";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
@@ -21,58 +20,20 @@ console.log("   EMAIL_PASS:", process.env.EMAIL_PASS ? "✅ Set" : "❌ Missing"
 console.log("   PORT:", process.env.PORT || "5000 (default)");
 
 const app = express();
-// Enhanced CORS configuration for mobile compatibility
+// Simplified CORS configuration
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, Postman, etc.)
-    if (!origin) return callback(null, true);
-    
-    const allowedOrigins = [
-      'https://acm-sigapp.onrender.com', // Backend URL
-      'https://acm-sigapp-yho1-f836xfqdi-shantanus-projects-bddb91ff.vercel.app', // Vercel deployment URL
-      'https://srmacmsigapp.xyz', // Custom domain
-      'https://www.srmacmsigapp.xyz' // Custom domain with www
-    ];
-    
-    // Allow any Vercel deployment (for dynamic URLs)
-    if (origin.includes('.vercel.app')) {
-      return callback(null, true);
-    }
-    
-    // Allow any Render deployment (for dynamic URLs)
-    if (origin.includes('.onrender.com')) {
-      return callback(null, true);
-    }
-    
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    
-    console.log('🚫 CORS blocked origin:', origin);
-    return callback(new Error('Not allowed by CORS'));
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true);
+    if (origin.includes(".vercel.app") || origin.includes(".onrender.com")) return cb(null, true);
+    const allowed = ["https://srmacmsigapp.xyz","https://www.srmacmsigapp.xyz"];
+    return allowed.includes(origin) ? cb(null, true) : cb(new Error("CORS blocked"));
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: [
-    'Content-Type', 
-    'Authorization', 
-    'X-Requested-With',
-    'Accept',
-    'Origin',
-    'Access-Control-Request-Method',
-    'Access-Control-Request-Headers'
-  ],
-  credentials: true,
-  optionsSuccessStatus: 200, // For legacy browser support
-  preflightContinue: false
+  credentials: true
 }));
 
-// Express built-in JSON parser (preferred over bodyParser)
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// Keep bodyParser as fallback for compatibility
-app.use(bodyParser.json({ limit: '10mb' }));
-app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
+// Body parsing
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Log all incoming requests
 app.use((req, res, next) => {
@@ -90,11 +51,7 @@ app.use((req, res, next) => {
 
 // Mobile network compatibility middleware
 app.use((req, res, next) => {
-  // Add headers for better mobile compatibility
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Access-Control-Request-Method, Access-Control-Request-Headers');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  // Add cache control headers for mobile compatibility
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
