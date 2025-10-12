@@ -223,7 +223,7 @@ const Footer = () => {
                 <Button 
                   variant="hero" 
                   size="default"
-                  onClick={handleSubscribe}
+                  onClick={() => handleSubscribe()}
                   disabled={loading}
                   className="gradient-bg-animated group"
                 >

@@ -14,6 +14,22 @@
   body {
     overflow-x: hidden;
     position: relative;
+    cursor: none; /* Hide default cursor */
+  }
+  
+  /* Hide cursor on all elements */
+  * {
+    cursor: none !important;
+  }
+
+  /* Hide scrollbars for carousel */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 
   :root {
