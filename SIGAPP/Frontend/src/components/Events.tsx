@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, MapPin, ArrowRight, Pause, Play } from "lucide-react";
 import { ParticleSystem } from "@/components/ui/particles"; // Imported glitter particles background
+import EventBanner from "./EventBanner";
 
 const Events = () => {
   const [isAutoScrolling, setIsAutoScrolling] = useState(true);
@@ -158,16 +159,30 @@ const Events = () => {
     type: "Escape Room",
     title: "AI Escape Room",
     description: "Solve Codes from clues,collaborate with your team, and break free before time runs out.",
-    date: "To be revealed soon",
-    time: "To be revealed soon",
-    location: "To be revealed soon",
+    date: "3 November 2025",
+    time: "9 AM Onwards",
+    location: "Tech Park 2(702 & 712)",
     gradient: "from-gradient-cyan to-gradient-blue",
   };
 
   return (
-    <section className="py-20 relative bg-gradient-to-b from-black via-gray-900 to-black text-white overflow-hidden">
-      {/* Glitter Particles Background */}
-      <ParticleSystem particleCount={50} />
+    <>
+      {/* AI Escape Room Banner */}
+      <EventBanner
+        eventUrl="https://acm-escape-room.vercel.app/"
+        expiryDate="2025-11-02T23:30:00" // November 2, 2025 at 11:30 PM
+        title="AI Escape Room - Neural Override"
+        description="Join the ultimate coding challenge where teamwork meets adventure. Solve puzzles, build solutions, and win prizes worth ₹50,000!"
+        date="November 3, 2025"
+        time="9:00 AM Onwards"
+        location="SRM University - TP2 702 & 712"
+        prizePool="₹50,000"
+        registrationFee="₹200 per team"
+      />
+      
+      <section className="py-20 relative bg-gradient-to-b from-black via-gray-900 to-black text-white overflow-hidden">
+        {/* Glitter Particles Background */}
+        <ParticleSystem particleCount={50} />
 
       <div className="container mx-auto px-6 relative z-10">
         <motion.div
@@ -342,6 +357,7 @@ const Events = () => {
         </motion.div>
       </div>
     </section>
+    </>
   );
 };
 
