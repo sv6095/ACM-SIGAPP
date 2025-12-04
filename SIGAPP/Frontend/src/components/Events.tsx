@@ -3,13 +3,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, MapPin, ArrowRight, Pause, Play } from "lucide-react";
+import { Calendar, Clock, MapPin, ArrowRight, Pause, Play, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { ParticleSystem } from "@/components/ui/particles"; // Imported glitter particles background
 import EventBanner from "./EventBanner";
 
 const Events = () => {
   const [isAutoScrolling, setIsAutoScrolling] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showEscapeRoomGallery, setShowEscapeRoomGallery] = useState(false);
+  const [galleryImageIndex, setGalleryImageIndex] = useState(0);
+  const [escapeRoomImages, setEscapeRoomImages] = useState<string[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // All event images for carousel
@@ -105,6 +108,34 @@ const Events = () => {
       type: "Event Gallery"
     }
   ];
+
+  // Escape Room Event Gallery Images & Videos - Load dynamically
+  useEffect(() => {
+    const loadMedia = async () => {
+      try {
+        const response = await fetch('/events/aiescaperoom/');
+        const html = await response.text();
+        // Extract media filenames (images and videos)
+        const mediaRegex = /href="([^"]+\.(jpg|jpeg|png|gif|webp|mp4|webm|mov|avi|mkv))"/gi;
+        const matches = html.matchAll(mediaRegex);
+        const media: string[] = [];
+        
+        for (const match of matches) {
+          const filename = match[1];
+          if (filename && !filename.includes('..')) {
+            media.push(`/events/aiescaperoom/${filename}`);
+          }
+        }
+        
+        setEscapeRoomImages(media);
+      } catch (error) {
+        // Fallback: manually add media if directory listing fails
+        console.log('Dynamic media loading not available, use manual configuration');
+      }
+    };
+
+    loadMedia();
+  }, []);
 
   // Auto-scroll functionality
   useEffect(() => {
@@ -211,7 +242,7 @@ const Events = () => {
             variants={cardVariants}
             className="glass p-8 rounded-2xl hover:glass-hover transition-all duration-300 group border-white/10 relative overflow-hidden cursor-pointer"
             whileHover={{ y: -8 }}
-            onClick={() => window.open('/events', '_self')}
+            onClick={() => setShowEscapeRoomGallery(true)}
           >
             {/* Background Gradient Overlay */}
             <div className={`absolute inset-0 bg-gradient-to-br ${event.gradient} opacity-5 group-hover:opacity-10 transition-opacity`} />
@@ -357,6 +388,110 @@ const Events = () => {
         </motion.div>
       </div>
     </section>
+
+    {/* Escape Room Gallery Modal */}
+    {showEscapeRoomGallery && (
+      <motion.div
+        className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={() => setShowEscapeRoomGallery(false)}
+      >
+        <motion.div
+          className="bg-gray-900 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col relative border border-white/10"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Close Button */}
+          <button
+            onClick={() => setShowEscapeRoomGallery(false)}
+            className="absolute top-4 right-4 z-10 p-2 hover:bg-white/10 rounded-lg transition-colors"
+          >
+            <X className="w-6 h-6 text-white" />
+          </button>
+
+          {/* Gallery Content */}
+          <div className="flex-1 flex flex-col overflow-y-auto">
+            {/* Media Display - Images and Videos */}
+            <div className="flex-1 relative bg-black flex items-center justify-center">
+              {escapeRoomImages[galleryImageIndex] && (
+                <>
+                  {/* Image Display */}
+                  {/\.(jpg|jpeg|png|gif|webp)$/i.test(escapeRoomImages[galleryImageIndex]) && (
+                    <motion.img
+                      key={galleryImageIndex}
+                      src={escapeRoomImages[galleryImageIndex]}
+                      alt={`Event Gallery ${galleryImageIndex + 1}`}
+                      className="max-w-full max-h-full object-contain"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  )}
+                  
+                  {/* Video Display */}
+                  {/\.(mp4|webm|mov|avi|mkv)$/i.test(escapeRoomImages[galleryImageIndex]) && (
+                    <motion.video
+                      key={galleryImageIndex}
+                      src={escapeRoomImages[galleryImageIndex]}
+                      controls
+                      className="max-w-full max-h-full object-contain"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  )}
+                </>
+              )}
+            </div>
+
+            {/* Navigation Controls */}
+            <div className="p-6 bg-gray-800/50 border-t border-white/10">
+              {/* Navigation Buttons */}
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => setGalleryImageIndex((prev) => (prev - 1 + escapeRoomImages.length) % escapeRoomImages.length)}
+                  disabled={escapeRoomImages.length <= 1}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="w-6 h-6 text-white" />
+                </button>
+                <span className="text-gray-400">
+                  {galleryImageIndex + 1} / {escapeRoomImages.length}
+                </span>
+                <button
+                  onClick={() => setGalleryImageIndex((prev) => (prev + 1) % escapeRoomImages.length)}
+                  disabled={escapeRoomImages.length <= 1}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight className="w-6 h-6 text-white" />
+                </button>
+              </div>
+
+              {/* Image Dots */}
+              {escapeRoomImages.length > 1 && (
+                <div className="flex justify-center gap-2 mt-4">
+                  {escapeRoomImages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setGalleryImageIndex(index)}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        index === galleryImageIndex
+                          ? 'bg-gradient-cyan scale-125'
+                          : 'bg-gray-600 hover:bg-gray-400'
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    )}
     </>
   );
 };
