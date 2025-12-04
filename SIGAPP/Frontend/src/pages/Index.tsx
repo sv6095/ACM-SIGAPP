@@ -3,6 +3,8 @@ import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Domains from '@/components/Domains';
 import Events from '@/components/Events';
+import Gallery from '@/components/Gallery';
+import Certificates from '@/components/Certificates';
 import Team from '@/components/Team';
 import Footer from '@/components/Footer';
 
@@ -25,6 +27,12 @@ const Index = () => {
         </section>
         <section id="events">
           <Events />
+        </section>
+        <section id="gallery">
+          <Gallery />
+        </section>
+        <section id="certificates">
+          <Certificates />
         </section>
         <section id="team">
           <Team />
