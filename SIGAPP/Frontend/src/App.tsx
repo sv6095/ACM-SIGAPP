@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Events from "./pages/Events";
+import GalleryPage from "./pages/Gallery";
+import CertificatesPage from "./pages/Certificates";
 import NotFound from "./pages/NotFound";
 import CustomCursor from "./components/CustomCursor"; // import global cursor
 
@@ -20,6 +22,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/certificates" element={<CertificatesPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -29,3 +33,4 @@ const App = () => (
 );
 
 export default App;
+
