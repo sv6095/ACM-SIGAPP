@@ -107,12 +107,11 @@ const EventBanner: React.FC<EventBannerProps> = ({
             {/* Action Buttons - Larger */}
             <div className="flex flex-col items-center gap-4">
               <Button
-                onClick={handleRegister}
+                disabled
                 size="lg"
-                className="bg-gradient-to-r from-gradient-cyan to-gradient-blue hover:from-gradient-blue hover:to-gradient-cyan text-white font-bold px-8 py-3 text-lg rounded-xl transition-all duration-300 transform hover:scale-105 shadow-xl"
+                className="bg-gray-600 text-white font-bold px-8 py-3 text-lg rounded-xl transition-all duration-300 shadow-xl"
               >
-                <ExternalLink className="w-5 h-5 mr-2" />
-                Register Now
+                Completed
               </Button>
               <Button
                 variant="ghost"

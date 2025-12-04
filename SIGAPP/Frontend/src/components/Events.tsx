@@ -160,7 +160,7 @@ const Events = () => {
     title: "AI Escape Room",
     description: "Solve Codes from clues,collaborate with your team, and break free before time runs out.",
     date: "3 November 2025",
-    time: "9 AM Onwards",
+    time: "Completed",
     location: "Tech Park 2(702 & 712)",
     gradient: "from-gradient-cyan to-gradient-blue",
   };
@@ -193,7 +193,7 @@ const Events = () => {
           viewport={{ once: true }}
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            <span className="gradient-text">Upcoming Event</span>
+            <span className="gradient-text">Coming Soon</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Join us for an exciting challenge where teamwork and problem-solving meet adventure
